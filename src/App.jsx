@@ -1,21 +1,13 @@
-
-import './App.css'
+import React from 'react';
+import Dashboard from './components/Dashboard';
+import './styles/moderate.css';
 
 function App() {
-
-
   return (
-
-    <div className='App'>
-
-    <main className='main-content'>
-    <Routes>
-
-    </Routes>
-    </main>
-    
-  </div>
-  )
+    <div className="App">
+      <Dashboard />
+    </div>
+  );
 }
 
-export default App
+export default App;
