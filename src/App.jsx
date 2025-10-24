@@ -1,21 +1,14 @@
 
 import './App.css'
+import BiomassConsumptionDashboard from './pages/BiomassConsumptionDashboard';
 
 function App() {
 
-
   return (
-
-    <div className='App'>
-
-    <main className='main-content'>
-    <Routes>
-
-    </Routes>
-    </main>
-    
-  </div>
-  )
+    <div>
+      <BiomassConsumptionDashboard />
+    </div>
+  );
 }
 
 export default App
