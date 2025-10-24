@@ -1,16 +1,16 @@
-# React + Vite
+# Predicción de biomasa
+## Proyecto MODERATE - Innovathon 2025
+<p>
+  <img src="public/grafico.png" alt="Vista responsive de gráfico" width="200">
+  <img src="public/tabla.png" alt="Vista responsive de tabla" width="200">
+</p>
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### 🎯 Contexto y objetivo
+Abastecimiento de silos de biomasa en edificios residenciales.
 
-Currently, two official plugins are available:
+El objetivo del proyecto es realizar una web/app que sea capaz de predecir la demanda de calefacción y consumo de biomasa para una semana en un conjunto reducido de instalaciones.  
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### 🏆 Resultado final
+Dashboard sencillo donde se aprecia un gráfico con las predicciones de los datos y el valor real. También presenta una tabla resumen con la información principal.
 
-## React Compiler
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
