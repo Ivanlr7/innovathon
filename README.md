@@ -1,5 +1,8 @@
 # Predicción de biomasa
 ## Proyecto MODERATE - Innovathon 2025
+!["Vista responsive de gráfico"](public/grafico.png)
+!["Vista responsive de tabla"](public/tabla.png)
+
 
 ### 🎯 Contexto y objetivo
 Abastecimiento de silos de biomasa en edificios residenciales.
