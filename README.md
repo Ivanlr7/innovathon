@@ -1,8 +1,8 @@
 # Predicción de biomasa
 ## Proyecto MODERATE - Innovathon 2025
 <p>
-  <img src="public/grafico.png" alt="Vista responsive de gráfico" width="150">
-  <img src="public/tabla.png" alt="Vista responsive de tabla" width="150">
+  <img src="public/grafico.png" alt="Vista responsive de gráfico" width="200">
+  <img src="public/tabla.png" alt="Vista responsive de tabla" width="200">
 </p>
 
 ### 🎯 Contexto y objetivo
