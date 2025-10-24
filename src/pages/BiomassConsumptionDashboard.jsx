@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { AlertCircle, TrendingUp, Activity, Flame } from 'lucide-react';
-import './BiomassConsumptionDashboard.css'
+import './BiomassConsumptionDashboard.css';
 
 // Configuración de la API
-const API_BASE_URL = 'http://localhost:8000/api'; // Cambiar según tu backend
+const API_BASE_URL = 'http://localhost:8000/api';
 
 const BiomassConsumptionDashboard = () => {
-  // Estados
   const [installations, setInstallations] = useState([]);
   const [selectedInstallation, setSelectedInstallation] = useState(null);
   const [predictionData, setPredictionData] = useState(null);
@@ -16,12 +15,10 @@ const BiomassConsumptionDashboard = () => {
   const [error, setError] = useState(null);
   const [weeklyForecast, setWeeklyForecast] = useState([]);
 
-  // Cargar lista de instalaciones al montar el componente
   useEffect(() => {
     fetchInstallations();
   }, []);
 
-  // Cargar predicciones cuando se selecciona una instalación
   useEffect(() => {
     if (selectedInstallation) {
       fetchPredictions(selectedInstallation);
@@ -29,7 +26,6 @@ const BiomassConsumptionDashboard = () => {
     }
   }, [selectedInstallation]);
 
-  // Función para obtener lista de instalaciones
   const fetchInstallations = async () => {
     try {
       setLoading(true);
@@ -45,7 +41,6 @@ const BiomassConsumptionDashboard = () => {
     }
   };
 
-  // Función para obtener predicciones
   const fetchPredictions = async (installationId) => {
     try {
       setLoading(true);
@@ -54,7 +49,6 @@ const BiomassConsumptionDashboard = () => {
       const data = await response.json();
       setPredictionData(data);
       
-      // Formatear datos para el forecast semanal
       const forecast = data.weekly_forecast.map((item, index) => ({
         day: item.date,
         hdd: item.hdd,
@@ -70,28 +64,25 @@ const BiomassConsumptionDashboard = () => {
     }
   };
 
-  // Función para obtener datos históricos
   const fetchHistoricalData = async (installationId) => {
     try {
       const response = await fetch(`${API_BASE_URL}/historical/${installationId}`);
       if (!response.ok) throw new Error('Error al cargar histórico');
       const data = await response.json();
       
-      // Formatear datos históricos
       const formattedData = data.map(item => ({
-        date: item.date,
+        date: new Date(item.date).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' }),
         demanda_real: item.actual_demand,
         demanda_predicha: item.predicted_demand,
         biomasa_real: item.actual_biomass,
         biomasa_predicha: item.predicted_biomass
       }));
-      setHistoricalData(formattedData.slice(-30)); // Últimos 30 días
+      setHistoricalData(formattedData.slice(-30));
     } catch (err) {
       console.error('Error cargando histórico:', err);
     }
   };
 
-  // Calcular estadísticas
   const calculateStats = () => {
     if (!weeklyForecast.length) return null;
     
@@ -110,7 +101,6 @@ const BiomassConsumptionDashboard = () => {
 
   const stats = calculateStats();
 
-  // Detectar alertas (consumo > 80% del máximo histórico)
   const hasHighConsumptionAlert = () => {
     if (!stats || !historicalData.length) return false;
     const maxHistorical = Math.max(...historicalData.map(item => item.biomasa_real || 0));
@@ -119,11 +109,9 @@ const BiomassConsumptionDashboard = () => {
 
   if (loading && !predictionData) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gradient-to-br from-blue-50 to-cyan-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600 font-medium">Cargando datos...</p>
-        </div>
+      <div className="loading-screen">
+        <div className="loader"></div>
+        <p>Cargando datos...</p>
       </div>
     );
   }
@@ -132,7 +120,7 @@ const BiomassConsumptionDashboard = () => {
     <div className="dashboard-container">
       <header className="dashboard-header">
         <div className="title-section">
-          <h1>Dashboard de Predicción de Biomasa</h1>
+          <h1>Predicción de biomasa</h1>
           <p>Proyecto MODERATE - Innovathon 2025</p>
         </div>
 
@@ -166,9 +154,69 @@ const BiomassConsumptionDashboard = () => {
         </div>
       )}
 
-      {/* Gráficas principales */}
+      {/* Gráfica 1: Comparativa de Demanda (Real vs Predicción) */}
       <section className="chart-section">
-        <h2>Predicción Semanal de Consumo de Biomasa</h2>
+        <h2>Demanda real vs Predicción</h2>
+        <p>(Últimos 30 días)</p>
+        <ResponsiveContainer width="100%" height={350}>
+          <LineChart data={historicalData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#dbe6fd" />
+            <XAxis dataKey="date" stroke="#6b7280" />
+            <YAxis stroke="#6b7280" />
+            <Tooltip />
+            <Legend />
+            <Line 
+              type="monotone" 
+              dataKey="demanda_real" 
+              stroke="#104881" 
+              strokeWidth={2.5}
+              name="Demanda Real"
+              dot={{ fill: '#104881', r: 4 }}
+            />
+            <Line 
+              type="monotone" 
+              dataKey="demanda_predicha" 
+              stroke="#57d1f0" 
+              strokeWidth={2.5}
+              strokeDasharray="5 5"
+              name="Demanda Predicha"
+              dot={{ fill: '#57d1f0', r: 4 }}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </section>
+
+      {/* Gráfica 2: Comparativa de Consumo de Biomasa (Real vs Predicción) */}
+      <section className="chart-section">
+        <h2>Consumo de biomasa real vs Predicción</h2>
+        <p>(Últimos 30 días)</p>
+        <ResponsiveContainer width="100%" height={350}>
+          <BarChart data={historicalData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#dbe6fd" />
+            <XAxis dataKey="date" stroke="#6b7280" />
+            <YAxis stroke="#6b7280" />
+            <Tooltip />
+            <Legend />
+            <Bar 
+              dataKey="biomasa_real" 
+              fill="#ef4444" 
+              name="Biomasa Real"
+              radius={[8, 8, 0, 0]}
+            />
+            <Bar 
+              dataKey="biomasa_predicha" 
+              fill="#fb923c" 
+              name="Biomasa Predicha"
+              radius={[8, 8, 0, 0]}
+              opacity={0.7}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </section>
+
+      {/* Gráfica de predicción semanal */}
+      <section className="chart-section">
+        <h2>Predicción semanal de consumo de biomasa</h2>
         <ResponsiveContainer width="100%" height={300}>
           <AreaChart data={weeklyForecast}>
             <defs>
@@ -189,7 +237,7 @@ const BiomassConsumptionDashboard = () => {
 
       {/* Tabla resumen */}
       <section className="table-section">
-        <h2>Resumen Semanal por Día</h2>
+        <h2>Resumen semanal por día</h2>
         <div className="table-wrapper">
           <table>
             <thead>
@@ -221,7 +269,7 @@ const BiomassConsumptionDashboard = () => {
       </section>
 
       <footer className="dashboard-footer">
-        © 2025 Proyecto MODERATE - Innovathon | Powered by CTIC, Veolia, Universidad de Oviedo
+        © 2025 Proyecto MODERATE - Innovathon | Powered by CTIC, Veolia, Universidad de Oviedo | Propuesta grupo 3
       </footer>
     </div>
   );
