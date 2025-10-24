@@ -3,8 +3,8 @@ import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, L
 import { AlertCircle, TrendingUp, Activity, Flame } from 'lucide-react';
 import './BiomassConsumptionDashboard.css';
 
-// Configuración de la API
-const API_BASE_URL = 'http://localhost:8000/api';
+/* Configuración de la API
+const API_BASE_URL = 'http://localhost:8000/api'; */
 
 const BiomassConsumptionDashboard = () => {
   const [installations, setInstallations] = useState([]);
@@ -15,7 +15,74 @@ const BiomassConsumptionDashboard = () => {
   const [error, setError] = useState(null);
   const [weeklyForecast, setWeeklyForecast] = useState([]);
 
+  // Simulación de carga de datos
   useEffect(() => {
+    // Mock: simulamos 3 instalaciones
+    const fakeInstallations = [
+      { id: 1, name: 'Edificio Norte' },
+      { id: 2, name: 'Residencia Central' },
+      { id: 3, name: 'Centro Sur' }
+    ];
+    setInstallations(fakeInstallations);
+    setSelectedInstallation(fakeInstallations[0].id);
+
+    // Mock: generamos datos históricos (últimos 30 días)
+    const today = new Date();
+    const mockHistorical = Array.from({ length: 30 }).map((_, i) => {
+      const date = new Date(today);
+      date.setDate(today.getDate() - (30 - i));
+      const demanda_real = Math.random() * 500 + 500;
+      const demanda_predicha = demanda_real * (0.9 + Math.random() * 0.2);
+      const biomasa_real = Math.random() * 300 + 200;
+      const biomasa_predicha = biomasa_real * (0.9 + Math.random() * 0.15);
+      return {
+        date: date.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit' }),
+        demanda_real,
+        demanda_predicha,
+        biomasa_real,
+        biomasa_predicha
+      };
+    });
+    setHistoricalData(mockHistorical);
+
+    // Mock: generamos predicciones semanales
+    const daysOfWeek = ['lun', 'mar', 'mié', 'jue', 'vie', 'sáb', 'dom'];
+    const mockWeekly = daysOfWeek.map((d, i) => ({
+      day: new Date(today.setDate(today.getDate() + 1)).toISOString(),
+      dayName: d,
+      hdd: Math.random() * 8 + 2,
+      demanda: Math.random() * 700 + 400,
+      biomasa: Math.random() * 400 + 150
+    }));
+    setWeeklyForecast(mockWeekly);
+
+    // Simulamos un pequeño retardo de carga
+    setTimeout(() => setLoading(false), 800);
+  }, []);
+
+  const calculateStats = () => {
+    if (!weeklyForecast.length) return null;
+    const totalBiomass = weeklyForecast.reduce((s, i) => s + i.biomasa, 0);
+    const avgDemand = weeklyForecast.reduce((s, i) => s + i.demanda, 0) / weeklyForecast.length;
+    const maxBiomass = Math.max(...weeklyForecast.map(i => i.biomasa));
+    const peakDay = weeklyForecast.find(i => i.biomasa === maxBiomass);
+    return {
+      totalBiomass: totalBiomass.toFixed(2),
+      avgDemand: avgDemand.toFixed(2),
+      maxBiomass: maxBiomass.toFixed(2),
+      peakDay: peakDay?.dayName || 'N/A'
+    };
+  };
+
+  const stats = calculateStats();
+
+  const hasHighConsumptionAlert = () => {
+    if (!stats || !historicalData.length) return false;
+    const maxHistorical = Math.max(...historicalData.map(item => item.biomasa_real || 0));
+    return parseFloat(stats.maxBiomass) > maxHistorical * 0.8;
+  };
+
+  /*useEffect(() => {
     fetchInstallations();
   }, []);
 
@@ -81,7 +148,7 @@ const BiomassConsumptionDashboard = () => {
     } catch (err) {
       console.error('Error cargando histórico:', err);
     }
-  };
+  }; 
 
   const calculateStats = () => {
     if (!weeklyForecast.length) return null;
@@ -105,7 +172,7 @@ const BiomassConsumptionDashboard = () => {
     if (!stats || !historicalData.length) return false;
     const maxHistorical = Math.max(...historicalData.map(item => item.biomasa_real || 0));
     return parseFloat(stats.maxBiomass) > maxHistorical * 0.8;
-  };
+  }; */
 
   if (loading && !predictionData) {
     return (
